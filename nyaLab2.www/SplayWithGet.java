@@ -45,14 +45,13 @@ public class SplayWithGet<E extends Comparable<? super E>> extends BinarySearchT
                 else if(shouldZagZig)
                 {
                     doubleRotateRight(t.parent.parent);
-                    t = t.parent.parent;
+                    t = t.parent;
                     System.out.println(("zagzig"));
                 }
                 else if(shouldZigZag)
                 {
                     doubleRotateLeft(t.parent.parent);
-                    t = t.parent.parent;
-                    System.out.println(("zigzag"));
+                    t = t.parent;
                 }
             }
             else if(shouldZag)
@@ -69,9 +68,11 @@ public class SplayWithGet<E extends Comparable<? super E>> extends BinarySearchT
             }
 
         }
-        if(t != null)
+
+        if(t != null && e == t.element)
         {
-            System.out.println("value of root is element: " + e == t.element);
+            System.out.println("rootVal = element");
+            int i = 5;
         }
         System.out.println( t == null);
         return t == null || notCorrectElemFound ? null : t.element;
