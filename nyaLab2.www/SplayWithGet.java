@@ -3,13 +3,13 @@
  */
 public class SplayWithGet<E extends Comparable<? super E>> extends BinarySearchTree<E> implements CollectionWithGet<E> {
 
+    boolean notCorrectElemFound = false;
     public E get(E e) {
         Entry t = find(e, root);
         if(t==null)
         {
             return null;
         }
-        boolean notCorrectElemFound = t.element != e;
         Entry parent;
         Entry grandparent;
         while(t.parent != null)
@@ -24,8 +24,10 @@ public class SplayWithGet<E extends Comparable<? super E>> extends BinarySearchT
             boolean shouldZag;
             shouldZag = t.parent.left == t;
             shouldZig = t.parent.right == t;
-
-            //System.out.println(t.parent.parent != null);
+            System.out.print("PARENT: ");
+            System.out.println(t.parent != null);
+            System.out.print("GRANDPARENT: ");
+            System.out.println(t.parent.parent != null);
             if(t.parent.parent != null)
             {
             shouldZigZag = t.parent.left == t && t.parent.parent.right == t.parent;
@@ -35,11 +37,13 @@ public class SplayWithGet<E extends Comparable<? super E>> extends BinarySearchT
                 if(shouldZigZig)
                 {
                     zigzig(t.parent.parent);
+                    t=t.parent.parent;
                     System.out.println(("zigzig"));
                 }
                 else if(shouldZagZag)
                 {
                     zagzag(t.parent.parent);
+                    t=t.parent.parent;
                     System.out.println(("zagzag"));
                 }
                 else if(shouldZagZig)
@@ -69,13 +73,14 @@ public class SplayWithGet<E extends Comparable<? super E>> extends BinarySearchT
 
         }
 
-        if(t != null && e == t.element)
+        
+        if(t==null || notCorrectElemFound)
         {
-            System.out.println("rootVal = element");
-            int i = 5;
+            notCorrectElemFound = false;
+            return null;
         }
-        System.out.println( t == null);
-        return t == null || notCorrectElemFound ? null : t.element;
+        else
+            return t.element;
     }  // get
     // ========== ========== ========== ==========
     @Override
@@ -85,13 +90,17 @@ public class SplayWithGet<E extends Comparable<? super E>> extends BinarySearchT
         else {
             int jfr = elem.compareTo( t.element );
             if ( jfr  < 0 )
-                if(t.left == null)
+                if(t.left == null) {
+                    notCorrectElemFound = true;
                     return t;
+                }
                 else
                     return find( elem, t.left );
             else if ( jfr > 0 )
-                if(t.right == null)
+                if(t.right == null) {
+                    notCorrectElemFound = true;
                     return t;
+                }
                 else
                     return find( elem, t.right );
             else
@@ -293,7 +302,7 @@ public class SplayWithGet<E extends Comparable<? super E>> extends BinarySearchT
             root = root.parent;
         }
     }
-
+/*
     public void zigzig(Entry z){
         if(z == null || z.left == null || z.left.left == null) {
             throw new NullPointerException("Fel indata");
@@ -358,6 +367,68 @@ public class SplayWithGet<E extends Comparable<? super E>> extends BinarySearchT
         else if(tempRoot != null && x.parent.left == z)
             x.parent.left = x;
         updateRoot();
+    }*/
+
+    public void zigzig(Entry z)
+    {
+        Entry y = z.left;
+        Entry x = y.left;
+        Entry a = x.left;
+        Entry b = x.right;
+        Entry c = y.right;
+        Entry d = z.right;
+
+        E tempE = z.element;
+        z.element = x.element;
+        x.element = tempE;
+
+        z.right = y;
+        z.left = a;
+        if(a!=null)
+            a.parent = z;
+
+        y.right = x;
+        y.left = b;
+        if(b!=null)
+            b.parent = y;
+
+        x.right = d;
+        if(d!=null)
+            d.parent = x;
+        x.left = c;
+        if(c!=null)
+            c.parent = x;
+    }
+
+    public void zagzag(Entry x)
+    {
+        Entry y = x.right;
+        Entry z = y.right;
+        Entry a = x.left;
+        Entry b = y.left;
+        Entry c = z.left;
+        Entry d = z.right;
+
+        E tempE = x.element;
+        x.element = z.element;
+        z.element = tempE;
+
+        x.left = y;
+        x.right = d;
+        if(d!=null)
+            d.parent = x;
+
+        y.left = z;
+        y.right = c;
+        if(c!=null)
+            c.parent = y;
+
+        z.left = a;
+        if(a!=null)
+            a.parent = z;
+        z.right = b;
+        if(b!=null)
+            b.parent = z;
     }
 
     /* Rotera 1 steg i vanstervarv, dvs

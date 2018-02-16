@@ -8,12 +8,12 @@ public class SplayWithGetTest {
     {
         SplayWithGet<Integer> spwg = new SplayWithGet<Integer>();
         Random r = new Random();
-        for(int i = 11; i >0; i--)
+        for(int i = 0; i < 15; i++)
         {
             spwg.add(new Integer(i*2));
         }
         System.out.print(spwg.toString());
-        spwg.zigzig(spwg.root);
+        spwg.zagzag(spwg.root);
         System.out.print(spwg.toString());
     }
 }
