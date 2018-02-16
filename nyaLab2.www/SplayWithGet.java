@@ -9,12 +9,11 @@ public class SplayWithGet<E extends Comparable<? super E>> extends BinarySearchT
         {
             return null;
         }
+        boolean notCorrectElemFound = t.element != e;
         Entry parent;
         Entry grandparent;
-        boolean done = false;
-        while(!done)
+        while(t.parent != null)
         {
-            System.out.println(String.valueOf(t.element));
             parent = t.parent;
             grandparent = parent.parent;
             boolean shouldZigZag;
@@ -23,53 +22,81 @@ public class SplayWithGet<E extends Comparable<? super E>> extends BinarySearchT
             boolean shouldZigZig;
             boolean shouldZig;
             boolean shouldZag;
-            shouldZag = parent.right == t;
-            shouldZig = parent.left == t;
+            shouldZag = t.parent.left == t;
+            shouldZig = t.parent.right == t;
 
+            //System.out.println(t.parent.parent != null);
             if(t.parent.parent != null)
             {
-            shouldZigZag = parent.left == t && grandparent.right == t.parent;
-            shouldZagZig = parent.right == t && grandparent.left == t.parent;
-            shouldZagZag = parent.right == t && grandparent.right == t.parent;
-            shouldZigZig = parent.left == t && grandparent.left == t.parent;
+            shouldZigZag = t.parent.left == t && t.parent.parent.right == t.parent;
+            shouldZagZig = t.parent.right == t && t.parent.parent.left == t.parent;
+            shouldZagZag = t.parent.right == t && t.parent.parent.right == t.parent;
+            shouldZigZig = t.parent.left == t && t.parent.parent.left == t.parent;
                 if(shouldZigZig)
                 {
-                    zigzig(grandparent);
+                    zigzig(t.parent.parent);
+                    System.out.println(("zigzig"));
                 }
                 else if(shouldZagZag)
                 {
-                    zagzag(grandparent);
+                    zagzag(t.parent.parent);
+                    System.out.println(("zagzag"));
                 }
                 else if(shouldZagZig)
                 {
-                    doubleRotateRight(grandparent);
-                    t = grandparent;
+                    doubleRotateRight(t.parent.parent);
+                    t = t.parent.parent;
+                    System.out.println(("zagzig"));
                 }
                 else if(shouldZigZag)
                 {
-                    doubleRotateLeft(grandparent);
-                    t = grandparent;
+                    doubleRotateLeft(t.parent.parent);
+                    t = t.parent.parent;
+                    System.out.println(("zigzag"));
                 }
             }
             else if(shouldZag)
             {
-                rotateRight(parent);
-                t = parent;
+                rotateRight(t.parent);
+                t = t.parent;
+                System.out.println(("zag"));
             }
             else if(shouldZig)
             {
-                rotateLeft(parent);
-                t = parent;
-            }
-            if(t.parent == null) {
-                done = true;
+                rotateLeft(t.parent);
+                t = t.parent;
+                System.out.println(("zig"));
             }
 
         }
-        return t == null ? null : t.element;
+        if(t != null)
+        {
+            System.out.println("value of root is element: " + e == t.element);
+        }
+        System.out.println( t == null);
+        return t == null || notCorrectElemFound ? null : t.element;
     }  // get
     // ========== ========== ========== ==========
-
+    @Override
+    protected Entry find( E elem, Entry t ) {
+        if ( t == null )
+            return null;
+        else {
+            int jfr = elem.compareTo( t.element );
+            if ( jfr  < 0 )
+                if(t.left == null)
+                    return t;
+                else
+                    return find( elem, t.left );
+            else if ( jfr > 0 )
+                if(t.right == null)
+                    return t;
+                else
+                    return find( elem, t.right );
+            else
+                return t;
+        }
+    }  //   find
 
     //private int height(Entry t) {
     //    if (t == null)
@@ -265,6 +292,7 @@ public class SplayWithGet<E extends Comparable<? super E>> extends BinarySearchT
             root = root.parent;
         }
     }
+
     public void zigzig(Entry z){
         if(z == null || z.left == null || z.left.left == null) {
             throw new NullPointerException("Fel indata");
@@ -290,6 +318,10 @@ public class SplayWithGet<E extends Comparable<? super E>> extends BinarySearchT
 
         x.right = y;
         x.parent = tempRoot;
+        if(tempRoot != null && x.parent.right == z)
+            x.parent.right = x;
+        else if(tempRoot != null && x.parent.left == z)
+            x.parent.left = x;
         updateRoot();
     }
 
@@ -320,6 +352,10 @@ public class SplayWithGet<E extends Comparable<? super E>> extends BinarySearchT
 
         x.left = y;
         x.parent = tempRoot;
+        if(tempRoot != null && x.parent.right == z)
+            x.parent.right = x;
+        else if(tempRoot != null && x.parent.left == z)
+            x.parent.left = x;
         updateRoot();
     }
 
