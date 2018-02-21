@@ -266,7 +266,7 @@ public class AVL_Tree<E extends Comparable<? super E>>
         x.left = y;
         checkHeight(y);
         checkHeight(x);
-    } //   rotateLeft
+    } //   zig
     // ========== ========== ========== ==========
 
     /* Rotera 2 steg i hogervarv, dvs

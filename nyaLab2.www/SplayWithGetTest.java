@@ -15,5 +15,7 @@ public class SplayWithGetTest {
         System.out.print(spwg.toString());
         spwg.zagzag(spwg.root);
         System.out.print(spwg.toString());
+        spwg.zigzig(spwg.root);
+        System.out.print(spwg.toString());
     }
 }
